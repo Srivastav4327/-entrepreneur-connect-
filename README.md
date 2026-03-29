@@ -60,7 +60,7 @@ Now you have a public URL you can share.
 
 ---
 
-## Deploying the app publicly (recommended: Vercel)
+## Deploying the app publicly (Vercel)
 
 Vercel integrates seamlessly with Next.js and can deploy by connecting your GitHub repo.
 
@@ -81,96 +81,8 @@ Option B — Vercel CLI quick deploy (from local machine):
 2. Log in `vercel login`
 3. Run `vercel` from the project root and follow prompts. You'll be able to set environment variables during setup or in the Vercel dashboard.
 
----
 
-## Deploy with Docker (alternate)
 
-You can build a Docker image and run it locally or push to a registry:
 
-Create a `Dockerfile` (example provided below) and then:
-
-```powershell
-# build
-docker build -t entrepreneur-connect:latest .
-
-# run locally (pass env vars)
-docker run -p 3000:3000 -e NEXT_PUBLIC_SUPABASE_URL="https://..." -e NEXT_PUBLIC_SUPABASE_ANON_KEY="..." entrepreneur-connect:latest
-
-# (optional) tag and push to Docker Hub
-docker tag entrepreneur-connect:latest yourdockerhub/entrepreneur-connect:latest
-docker push yourdockerhub/entrepreneur-connect:latest
-```
-
-Minimal example `Dockerfile` (for production):
-
-```Dockerfile
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci --production
-
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY . .
-COPY --from=deps /app/node_modules ./node_modules
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV production
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-EXPOSE 3000
-CMD ["npm","start"]
-```
-
----
-
-## Notes about environment variables & secrets
-
-- Never commit `.env.local` or secret keys into the public repository. Use Vercel environment variables or GitHub Secrets for CI.
-- Required env vars (examples found in repo): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server-side only).
-
----
-
-If you want, I can:
-
-- Create the Git repo locally and run the initial commit for you (I can prepare a script or run commands if you allow me to execute them).  
-- Prepare a `Dockerfile` in the repository now.  
-- Provide a short, shareable one-liner that shows the deployed URL once you push to Vercel / GitHub.
-
-Which do you want me to do next? (`create-remote` to run commands you can copy, `add-dockerfile` to add a Dockerfile file here, or `instructions-only` to stop here.)
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 
